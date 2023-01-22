@@ -27,7 +27,10 @@ func (c *CLI) Execute(args []string) int {
 
 	flags.StringVar(&filename, "filename", "", "Allowed extensions: .sql")
 
-	flag.Parse()
+	err := flags.Parse(args[1:])
+	if err != nil {
+		return ExitCodeParseFlagError
+	}
 
 	argv := flags.Args()
 	target := ""
