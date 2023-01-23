@@ -47,19 +47,28 @@ func (c *CLI) Execute(args []string) int {
 }
 
 func (c *CLI) run(target string) int {
-	f, err := os.Open(target)
+	r, err := ReadFile(target)
 	if err != nil {
 		return ExitCodeFail
+	}
+
+	fmt.Println(string(r))
+
+	return ExitCodeOK
+}
+
+func ReadFile(fn string) (string, error) {
+	f, err := os.Open(fn)
+	if err != nil {
+		return "", fmt.Errorf("File open error %v", err)
 	}
 
 	defer f.Close()
 
 	b, err := ioutil.ReadAll(f)
 	if err != nil {
-		return ExitCodeFail
+		return "", fmt.Errorf("File read error %v", err)
 	}
 
-	fmt.Println(string(b))
-
-	return ExitCodeOK
+	return string(b), nil
 }
