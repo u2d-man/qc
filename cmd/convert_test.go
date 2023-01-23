@@ -27,3 +27,32 @@ func TestRun_Success(t *testing.T) {
 		})
 	}
 }
+
+func TestConvertESQuery_Success(t *testing.T) {
+	type args struct {
+		sql string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "convert success",
+			args: args{sql: "SELECT * FROM test"},
+			want: `{"query": {"match_all": {}}}`,
+		},
+		{
+			name: "convert success",
+			args: args{sql: "SEECT * FROM test"},
+			want: `{"query": {"match_all": {}}}`,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got, _ := convertESQuery(tt.args.sql); got != tt.want {
+				t.Errorf("convertESQuery() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

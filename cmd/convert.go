@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"strings"
 )
 
 const (
@@ -55,6 +56,14 @@ func (c *CLI) run(target string) int {
 
 	fmt.Println(r)
 
+	converted, err := convertESQuery(r)
+	if err != nil {
+		fmt.Fprintf(c.errStream, err.Error())
+		return ExitCodeFail
+	}
+
+	fmt.Println(converted)
+
 	return ExitCodeOK
 }
 
@@ -72,4 +81,15 @@ func readFile(fn string) (string, error) {
 	}
 
 	return string(b), nil
+}
+
+func convertESQuery(sql string) (string, error) {
+	type ESSelect struct {
+	}
+	isContains := strings.Contains(sql, "SELECT")
+	if isContains != true {
+		return "", fmt.Errorf("Not contain SELECT")
+	}
+
+	return `{"query": {"match_all": {}}}`, nil
 }
