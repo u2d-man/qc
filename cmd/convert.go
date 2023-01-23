@@ -2,7 +2,10 @@ package cmd
 
 import (
 	"flag"
+	"fmt"
 	"io"
+	"io/ioutil"
+	"os"
 )
 
 const (
@@ -44,5 +47,19 @@ func (c *CLI) Execute(args []string) int {
 }
 
 func (c *CLI) run(target string) int {
+	f, err := os.Open(target)
+	if err != nil {
+		return ExitCodeFail
+	}
+
+	defer f.Close()
+
+	b, err := ioutil.ReadAll(f)
+	if err != nil {
+		return ExitCodeFail
+	}
+
+	fmt.Println(string(b))
+
 	return ExitCodeOK
 }
