@@ -56,7 +56,7 @@ func (c *CLI) run(target string) int {
 
 	fmt.Println(r)
 
-	converted, err := convertESQuery(r)
+	converted, err := convertQueryDSL(r)
 	if err != nil {
 		fmt.Fprintf(c.errStream, err.Error())
 		return ExitCodeFail
@@ -83,7 +83,7 @@ func readFile(fn string) (string, error) {
 	return string(b), nil
 }
 
-func convertESQuery(sql string) (string, error) {
+func convertQueryDSL(sql string) (string, error) {
 	type ESSelect struct {
 	}
 	isContains := strings.Contains(sql, "SELECT")

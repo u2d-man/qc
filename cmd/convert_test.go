@@ -50,7 +50,7 @@ func TestConvertESQuery_Success(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got, _ := convertESQuery(tt.args.sql); got != tt.want {
+			if got, _ := convertQueryDSL(tt.args.sql); got != tt.want {
 				t.Errorf("convertESQuery() = %v, want %v", got, tt.want)
 			}
 		})
