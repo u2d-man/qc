@@ -3,7 +3,7 @@ package cli
 type Token int
 
 const (
-	IOTA = iota
+	ILLEGAL Token = iota
 
 	// Whtie Space: ' '
 	WS
