@@ -4,8 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
-	"os"
 	"strings"
 )
 
@@ -65,22 +63,6 @@ func (c *CLI) run(target string) int {
 	fmt.Println(converted)
 
 	return ExitCodeOK
-}
-
-func readFile(fn string) (string, error) {
-	f, err := os.Open(fn)
-	if err != nil {
-		return "", fmt.Errorf("File open error: %v", err)
-	}
-
-	defer f.Close()
-
-	b, err := ioutil.ReadAll(f)
-	if err != nil {
-		return "", fmt.Errorf("File read error: %v", err)
-	}
-
-	return string(b), nil
 }
 
 func convertQueryDSL(sql string) (string, error) {
