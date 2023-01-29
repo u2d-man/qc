@@ -4,16 +4,15 @@ type Token int
 
 const (
 	ILLEGAL Token = iota
-
-	// Whtie Space: ' '
+	EOF
 	WS
 
-	// *
-	ASTERISK
-	// ,
-	COMMA
+	IDENT
 
+	ASTERISK // *
+	COMMA    // ,
+
+	// Keywords
 	SELECT
 	FROM
-	WHERE
 )
