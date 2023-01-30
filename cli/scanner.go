@@ -7,8 +7,6 @@ import (
 	"strings"
 )
 
-var eof = rune(0)
-
 type Scanner struct {
 	r *bufio.Reader
 }
@@ -20,13 +18,11 @@ func NewScanner(r io.Reader) *Scanner {
 func (s *Scanner) Scan() (tok Token, lit string) {
 	r := s.read()
 
-	if isWhiteSpace(r) {
+	if isWhitespace(r) {
 		s.unread()
-
-		return s.scanWhiteSpace()
+		return s.scanWhitespace()
 	} else if isLetter(r) {
 		s.unread()
-
 		return s.scanIdent()
 	}
 
@@ -42,14 +38,14 @@ func (s *Scanner) Scan() (tok Token, lit string) {
 	return ILLEGAL, string(r)
 }
 
-func (s *Scanner) scanWhiteSpace() (tok Token, lit string) {
+func (s *Scanner) scanWhitespace() (tok Token, lit string) {
 	var buf bytes.Buffer
 	buf.WriteRune(s.read())
 
 	for {
 		if r := s.read(); r == eof {
 			break
-		} else if !isWhiteSpace(r) {
+		} else if !isWhitespace(r) {
 			s.unread()
 			break
 		} else {
@@ -80,6 +76,8 @@ func (s *Scanner) scanIdent() (tok Token, lit string) {
 		return SELECT, buf.String()
 	case "FROM":
 		return FROM, buf.String()
+	case "WHERE":
+		return WHERE, buf.String()
 	}
 
 	return IDENT, buf.String()
@@ -90,22 +88,15 @@ func (s *Scanner) read() rune {
 	if err != nil {
 		return eof
 	}
-
 	return r
 }
 
-func isWhiteSpace(r rune) bool {
-	return r == ' ' || r == '\t' || r == '\n'
-}
+func (s *Scanner) unread() { _ = s.r.UnreadRune() }
 
-func isLetter(r rune) bool {
-	return (r >= 'a' || r <= 'z') || (r >= 'A' || r <= 'Z')
-}
+func isWhitespace(r rune) bool { return r == ' ' || r == '\t' || r == '\n' }
 
-func isDigit(r rune) bool {
-	return (r >= '0' || r <= '9')
-}
+func isLetter(r rune) bool { return (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') }
 
-func (s *Scanner) unread() {
-	_ = s.r.UnreadRune()
-}
+func isDigit(r rune) bool { return (r >= '0' && r <= '9') }
+
+var eof = rune(0)

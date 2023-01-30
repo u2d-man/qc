@@ -15,4 +15,5 @@ const (
 	// Keywords
 	SELECT
 	FROM
+	WHERE
 )

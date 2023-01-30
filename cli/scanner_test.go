@@ -20,6 +20,7 @@ func TestScanner_Success(t *testing.T) {
 
 		// Misc characters
 		{s: `*`, tok: ASTERISK, lit: "*"},
+		{s: `,`, tok: COMMA, lit: ","},
 
 		// Identifiers
 		{s: `foo`, tok: IDENT, lit: `foo`},
@@ -28,6 +29,7 @@ func TestScanner_Success(t *testing.T) {
 		// Keywords
 		{s: `FROM`, tok: FROM, lit: "FROM"},
 		{s: `SELECT`, tok: SELECT, lit: "SELECT"},
+		{s: `WHERE`, tok: WHERE, lit: "WHERE"},
 	}
 
 	for i, tt := range tests {
