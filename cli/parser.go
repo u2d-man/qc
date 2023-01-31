@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-type SQL struct {
+type SelectStatement struct {
 	Fields    []string
 	TableName string
 }
@@ -25,53 +25,37 @@ func NewParser(r io.Reader) *Parser {
 	return &Parser{s: NewScanner(r)}
 }
 
-func (p *Parser) Parse() (*SQL, error) {
-	stmt := &SQL{}
+func (p *Parser) Parse() (*SelectStatement, error) {
+	stmt := &SelectStatement{}
 
-	if tok, lit := p.scanIgnoreWhiteSpace(); tok != SELECT {
+	if tok, lit := p.scanIgnoreWhitespace(); tok != SELECT {
 		return nil, fmt.Errorf("found %q, expected SELECT", lit)
 	}
 
 	for {
-		tok, lit := p.scanIgnoreWhiteSpace()
+		tok, lit := p.scanIgnoreWhitespace()
 		if tok != IDENT && tok != ASTERISK {
-			return nil, fmt.Errorf("found %q, expected fields", lit)
+			return nil, fmt.Errorf("found %q, expected field", lit)
 		}
 		stmt.Fields = append(stmt.Fields, lit)
 
-		if tok, _ := p.scanIgnoreWhiteSpace(); tok != COMMA {
-			p.s.unread()
+		if tok, _ := p.scanIgnoreWhitespace(); tok != COMMA {
+			p.unscan()
 			break
 		}
 	}
 
-	if tok, lit := p.scanIgnoreWhiteSpace(); tok != FROM {
+	if tok, lit := p.scanIgnoreWhitespace(); tok != FROM {
 		return nil, fmt.Errorf("found %q, expected FROM", lit)
 	}
 
-	tok, lit := p.scanIgnoreWhiteSpace()
+	tok, lit := p.scanIgnoreWhitespace()
 	if tok != IDENT {
 		return nil, fmt.Errorf("found %q, expected table name", lit)
 	}
 	stmt.TableName = lit
 
 	return stmt, nil
-}
-
-func readFile(fn string) (string, error) {
-	f, err := os.Open(fn)
-	if err != nil {
-		return "", fmt.Errorf("File open error: %v", err)
-	}
-
-	defer f.Close()
-
-	b, err := ioutil.ReadAll(f)
-	if err != nil {
-		return "", fmt.Errorf("File read error: %v", err)
-	}
-
-	return string(b), nil
 }
 
 func (p *Parser) scan() (tok Token, lit string) {
@@ -87,15 +71,28 @@ func (p *Parser) scan() (tok Token, lit string) {
 	return
 }
 
-func (p *Parser) scanIgnoreWhiteSpace() (tok Token, lit string) {
+func (p *Parser) scanIgnoreWhitespace() (tok Token, lit string) {
 	tok, lit = p.scan()
 	if tok == WS {
 		tok, lit = p.scan()
 	}
-
 	return
 }
 
-func (p *Parser) unscan() {
-	p.buf.n = 1
+func (p *Parser) unscan() { p.buf.n = 1 }
+
+func readFile(fn string) (string, error) {
+	f, err := os.Open(fn)
+	if err != nil {
+		return "", fmt.Errorf("File open error: %v", err)
+	}
+
+	defer f.Close()
+
+	b, err := ioutil.ReadAll(f)
+	if err != nil {
+		return "", fmt.Errorf("File read error: %v", err)
+	}
+
+	return string(b), nil
 }
