@@ -8,8 +8,9 @@ import (
 )
 
 type SelectStatement struct {
-	Fields    []string
-	TableName string
+	Fields     []string
+	TableName  string
+	WhereField string
 }
 
 type Parser struct {
@@ -54,6 +55,15 @@ func (p *Parser) Parse() (*SelectStatement, error) {
 		return nil, fmt.Errorf("found %q, expected table name", lit)
 	}
 	stmt.TableName = lit
+
+	// SELECT * FROM table WHERE user_id = 1;
+	if tok, lit := p.scanIgnoreWhitespace(); tok == WHERE {
+		tok, lit = p.scanIgnoreWhitespace()
+		if tok != IDENT {
+			return nil, fmt.Errorf("found %q, expected field", lit)
+		}
+		stmt.WhereField = lit
+	}
 
 	return stmt, nil
 }
