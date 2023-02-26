@@ -21,6 +21,7 @@ func TestScanner_Success(t *testing.T) {
 		// Misc characters
 		{s: `*`, tok: ASTERISK, lit: "*"},
 		{s: `,`, tok: COMMA, lit: ","},
+		{s: `=`, tok: EQUAL, lit: "="},
 
 		// Identifiers
 		{s: `foo`, tok: IDENT, lit: `foo`},

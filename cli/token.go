@@ -11,7 +11,7 @@ const (
 
 	ASTERISK // *
 	COMMA    // ,
-	Equal    // =
+	EQUAL    // =
 
 	// Keywords
 	SELECT

@@ -33,6 +33,8 @@ func (s *Scanner) Scan() (tok Token, lit string) {
 		return ASTERISK, string(r)
 	case ',':
 		return COMMA, string(r)
+	case '=':
+		return EQUAL, string(r)
 	}
 
 	return ILLEGAL, string(r)
