@@ -20,7 +20,6 @@ func TestParser_ParseStatement(t *testing.T) {
 				TableName: "tbl",
 			},
 		},
-
 		// Multi-field statement
 		{
 			s: `SELECT first_name, last_name, age FROM my_table`,
@@ -29,13 +28,21 @@ func TestParser_ParseStatement(t *testing.T) {
 				TableName: "my_table",
 			},
 		},
-
 		// Select all statement
 		{
 			s: `SELECT * FROM my_table`,
 			stmt: &SelectStatement{
 				Fields:    []string{"*"},
 				TableName: "my_table",
+			},
+		},
+		// WHERE clause
+		{
+			s: `SELECT * FROM my_table WHERE user_id = 1`,
+			stmt: &SelectStatement{
+				Fields:     []string{"*"},
+				TableName:  "my_table",
+				WhereField: "user_id",
 			},
 		},
 

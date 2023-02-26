@@ -7,10 +7,11 @@ const (
 	EOF
 	WS
 
-	IDENT
+	IDENT // fields, table name
 
 	ASTERISK // *
 	COMMA    // ,
+	EQUAL    // =
 
 	// Keywords
 	SELECT
