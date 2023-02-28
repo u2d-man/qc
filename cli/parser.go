@@ -10,7 +10,7 @@ import (
 type SelectStatement struct {
 	Fields          []string
 	TableName       string
-	SearchCondition []any
+	SearchCondition []string
 }
 
 type Parser struct {
@@ -56,13 +56,18 @@ func (p *Parser) Parse() (*SelectStatement, error) {
 	}
 	stmt.TableName = lit
 
-	// SELECT * FROM table WHERE user_id = 1;
 	if tok, lit := p.scanIgnoreWhitespace(); tok == WHERE {
-		tok, lit = p.scanIgnoreWhitespace()
-		if tok != IDENT {
-			return nil, fmt.Errorf("found %q, expected field", lit)
+		for {
+			tok, lit = p.scanIgnoreWhitespace()
+			if tok != IDENT {
+				return nil, fmt.Errorf("found %q, expected field", lit)
+			}
+			stmt.SearchCondition = append(stmt.SearchCondition, lit)
+
+			if tok, _ := p.scanIgnoreWhitespace(); tok == SEMICOLON {
+				break
+			}
 		}
-		stmt.SearchCondition = append(stmt.SearchCondition, lit)
 	}
 
 	return stmt, nil

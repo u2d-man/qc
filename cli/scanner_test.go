@@ -26,6 +26,7 @@ func TestScanner_Success(t *testing.T) {
 		// Identifiers
 		{s: `foo`, tok: IDENT, lit: `foo`},
 		{s: `Zx12_3U_-`, tok: IDENT, lit: `Zx12_3U_`},
+		{s: `1`, tok: IDENT, lit: `1`},
 
 		// Keywords
 		{s: `FROM`, tok: FROM, lit: "FROM"},
