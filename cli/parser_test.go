@@ -14,7 +14,7 @@ func TestParser_ParseStatement(t *testing.T) {
 	}{
 		// Single field statement
 		{
-			s: `SELECT name FROM tbl`,
+			s: `SELECT name FROM tbl;`,
 			stmt: &SelectStatement{
 				Fields:    []string{"name"},
 				TableName: "tbl",
@@ -22,7 +22,7 @@ func TestParser_ParseStatement(t *testing.T) {
 		},
 		// Multi-field statement
 		{
-			s: `SELECT first_name, last_name, age FROM my_table`,
+			s: `SELECT first_name, last_name, age FROM my_table;`,
 			stmt: &SelectStatement{
 				Fields:    []string{"first_name", "last_name", "age"},
 				TableName: "my_table",
@@ -30,7 +30,7 @@ func TestParser_ParseStatement(t *testing.T) {
 		},
 		// Select all statement
 		{
-			s: `SELECT * FROM my_table`,
+			s: `SELECT * FROM my_table;`,
 			stmt: &SelectStatement{
 				Fields:    []string{"*"},
 				TableName: "my_table",
@@ -38,11 +38,11 @@ func TestParser_ParseStatement(t *testing.T) {
 		},
 		// WHERE clause
 		{
-			s: `SELECT * FROM my_table WHERE user_id = 1`,
+			s: `SELECT * FROM my_table WHERE user_id = 1;`,
 			stmt: &SelectStatement{
-				Fields:     []string{"*"},
-				TableName:  "my_table",
-				WhereField: "user_id",
+				Fields:          []string{"*"},
+				TableName:       "my_table",
+				SearchCondition: []any{"user_id"},
 			},
 		},
 

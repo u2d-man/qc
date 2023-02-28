@@ -8,9 +8,9 @@ import (
 )
 
 type SelectStatement struct {
-	Fields     []string
-	TableName  string
-	WhereField string
+	Fields          []string
+	TableName       string
+	SearchCondition []any
 }
 
 type Parser struct {
@@ -62,7 +62,7 @@ func (p *Parser) Parse() (*SelectStatement, error) {
 		if tok != IDENT {
 			return nil, fmt.Errorf("found %q, expected field", lit)
 		}
-		stmt.WhereField = lit
+		stmt.SearchCondition = append(stmt.SearchCondition, lit)
 	}
 
 	return stmt, nil
