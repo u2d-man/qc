@@ -21,7 +21,7 @@ func (s *Scanner) Scan() (tok Token, lit string) {
 	if isWhitespace(r) {
 		s.unread()
 		return s.scanWhitespace()
-	} else if isLetter(r) {
+	} else if isLetter(r) || isDigit(r) {
 		s.unread()
 		return s.scanIdent()
 	}
@@ -35,6 +35,8 @@ func (s *Scanner) Scan() (tok Token, lit string) {
 		return COMMA, string(r)
 	case '=':
 		return EQUAL, string(r)
+	case ';':
+		return SEMICOLON, string(r)
 	}
 
 	return ILLEGAL, string(r)

@@ -42,7 +42,7 @@ func TestParser_ParseStatement(t *testing.T) {
 			stmt: &SelectStatement{
 				Fields:          []string{"*"},
 				TableName:       "my_table",
-				SearchCondition: []any{"user_id"},
+				SearchCondition: []string{"user_id", "1"},
 			},
 		},
 
