@@ -9,9 +9,10 @@ const (
 
 	IDENT // fields, table name
 
-	ASTERISK // *
-	COMMA    // ,
-	EQUAL    // =
+	ASTERISK  // *
+	COMMA     // ,
+	EQUAL     // =
+	SEMICOLON // ;
 
 	// Keywords
 	SELECT
