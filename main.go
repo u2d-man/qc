@@ -2,7 +2,8 @@ package main
 
 import (
 	"os"
-	cmd "qc/cli"
+
+	cmd "github.com/UserKazun/qc/cli"
 )
 
 func main() {
