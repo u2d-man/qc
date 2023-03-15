@@ -1,9 +1,12 @@
 package cli
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
+	"io/ioutil"
+	"os"
 	"strings"
 )
 
@@ -12,6 +15,13 @@ const (
 	ExitCodeParseFlagError = 1
 	ExitCodeFail           = 1
 )
+
+type QueryDSL struct {
+	Query struct {
+		Match_all struct {
+		} `json:"match_all"`
+	} `json:"query"`
+}
 
 type CLI struct {
 	outStream, errStream io.Writer
@@ -27,36 +37,33 @@ func (c *CLI) Execute(args []string) int {
 	flags := flag.NewFlagSet("qc", flag.ExitOnError)
 	flags.SetOutput(c.errStream)
 
-	flags.StringVar(&filename, "filename", "", "Allowed extensions: .sql")
+	flags.StringVar(&filename, "f", "", "Allowed extensions: .sql")
 
 	err := flags.Parse(args[1:])
 	if err != nil {
 		return ExitCodeParseFlagError
 	}
 
-	argv := flags.Args()
-	target := ""
-	if len(argv) == 1 {
-		target = argv[0]
-	} else {
-		return ExitCodeParseFlagError
-	}
-
-	return c.run(target)
+	return c.run(filename)
 }
 
-func (c *CLI) run(target string) int {
-	r, err := readFile(target)
+func (c *CLI) run(filename string) int {
+	r, err := readFile(filename)
 	if err != nil {
-		fmt.Fprintf(c.errStream, err.Error())
+		fmt.Fprintln(c.errStream, err.Error())
 		return ExitCodeFail
 	}
 
-	fmt.Println(r)
-
-	converted, err := convertQueryDSL(r)
+	parser := NewParser(strings.NewReader(r))
+	stmt, err := parser.Parse()
 	if err != nil {
-		fmt.Fprintf(c.errStream, err.Error())
+		fmt.Fprintln(c.errStream, err.Error())
+		return ExitCodeFail
+	}
+
+	converted, err := c.convertToQueryDSL(stmt)
+	if err != nil {
+		fmt.Fprintln(c.errStream, err.Error())
 		return ExitCodeFail
 	}
 
@@ -65,13 +72,32 @@ func (c *CLI) run(target string) int {
 	return ExitCodeOK
 }
 
-func convertQueryDSL(sql string) (string, error) {
-	type ESSelect struct {
-	}
-	isContains := strings.Contains(sql, "SELECT")
-	if isContains != true {
-		return "", fmt.Errorf("Not contain SELECT")
+func (c *CLI) convertToQueryDSL(stmt *SelectStatement) (string, error) {
+	queryDSL := QueryDSL{}
+	if stmt != nil {
+		marshaled, err := json.Marshal(queryDSL)
+		if err != nil {
+			return "", fmt.Errorf("cannot marshal: %w", err)
+		}
+
+		return string(marshaled), nil
 	}
 
-	return `{"query": {"match_all": {}}}`, nil
+	return "", nil
+}
+
+func readFile(fn string) (string, error) {
+	f, err := os.Open(fn)
+	if err != nil {
+		return "", fmt.Errorf("File open error: %v", err)
+	}
+
+	defer f.Close()
+
+	b, err := ioutil.ReadAll(f)
+	if err != nil {
+		return "", fmt.Errorf("File read error: %v", err)
+	}
+
+	return string(b), nil
 }

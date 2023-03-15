@@ -3,8 +3,6 @@ package cli
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
-	"os"
 )
 
 type SelectStatement struct {
@@ -95,19 +93,3 @@ func (p *Parser) scanIgnoreWhitespace() (tok Token, lit string) {
 }
 
 func (p *Parser) unscan() { p.buf.n = 1 }
-
-func readFile(fn string) (string, error) {
-	f, err := os.Open(fn)
-	if err != nil {
-		return "", fmt.Errorf("File open error: %v", err)
-	}
-
-	defer f.Close()
-
-	b, err := ioutil.ReadAll(f)
-	if err != nil {
-		return "", fmt.Errorf("File read error: %v", err)
-	}
-
-	return string(b), nil
-}
