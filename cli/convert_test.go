@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"os"
 	"testing"
 )
 
@@ -34,23 +35,21 @@ func TestConvertESQuery_Success(t *testing.T) {
 	}
 	tests := []struct {
 		name string
-		args args
+		stmt *SelectStatement
 		want string
 	}{
 		{
 			name: "convert success",
-			args: args{sql: "SELECT * FROM test"},
-			want: `{"query": {"match_all": {}}}`,
-		},
-		{
-			name: "convert success",
-			args: args{sql: "SEECT * FROM test"},
-			want: `{"query": {"match_all": {}}}`,
+			stmt: &SelectStatement{
+				Fields:    []string{"name"},
+				TableName: "tbl",
+			},
+			want: `{"query":{"match_all":{}}}`,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got, _ := convertQueryDSL(tt.args.sql); got != tt.want {
+			if got, _ := NewCli(os.Stdout, os.Stderr).convertToQueryDSL(tt.stmt); got != tt.want {
 				t.Errorf("convertESQuery() = %v, want %v", got, tt.want)
 			}
 		})
