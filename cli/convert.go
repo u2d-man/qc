@@ -72,20 +72,6 @@ func (c *CLI) run(filename string) int {
 	return ExitCodeOK
 }
 
-func (c *CLI) convertToQueryDSL(stmt *SelectStatement) (string, error) {
-	queryDSL := QueryDSL{}
-	if stmt != nil {
-		marshaled, err := json.Marshal(queryDSL)
-		if err != nil {
-			return "", fmt.Errorf("cannot marshal: %w", err)
-		}
-
-		return string(marshaled), nil
-	}
-
-	return "", nil
-}
-
 func readFile(fn string) (string, error) {
 	f, err := os.Open(fn)
 	if err != nil {
@@ -100,4 +86,18 @@ func readFile(fn string) (string, error) {
 	}
 
 	return string(b), nil
+}
+
+func (c *CLI) convertToQueryDSL(stmt *SelectStatement) (string, error) {
+	queryDSL := QueryDSL{}
+	if stmt != nil {
+		marshaled, err := json.Marshal(queryDSL)
+		if err != nil {
+			return "", fmt.Errorf("cannot marshal: %w", err)
+		}
+
+		return string(marshaled), nil
+	}
+
+	return "", nil
 }
