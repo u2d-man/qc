@@ -49,20 +49,20 @@ func (c *CLI) Execute(args []string) int {
 func (c *CLI) run(filename string) int {
 	r, err := readFile(filename)
 	if err != nil {
-		fmt.Fprintln(c.errStream, err.Error())
+		_, _ = fmt.Fprintln(c.errStream, err.Error())
 		return ExitCodeFail
 	}
 
 	parser := NewParser(strings.NewReader(r))
 	stmt, err := parser.Parse()
 	if err != nil {
-		fmt.Fprintln(c.errStream, err.Error())
+		_, _ = fmt.Fprintln(c.errStream, err.Error())
 		return ExitCodeFail
 	}
 
 	converted, err := c.convertToQueryDSL(stmt)
 	if err != nil {
-		fmt.Fprintln(c.errStream, err.Error())
+		_, _ = fmt.Fprintln(c.errStream, err.Error())
 		return ExitCodeFail
 	}
 
@@ -77,11 +77,13 @@ func readFile(fn string) (string, error) {
 		return "", fmt.Errorf("File open error: %v", err)
 	}
 
-	defer f.Close()
+	defer func(f *os.File) {
+		_ = f.Close()
+	}(f)
 
 	b, err := io.ReadAll(f)
 	if err != nil {
-		return "", fmt.Errorf("File read error: %v", err)
+		return "", fmt.Errorf("file read error: %v", err)
 	}
 
 	return string(b), nil
