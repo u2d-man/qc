@@ -1,1 +1,1 @@
-SELECT * FROM test;
+SELECT id, name FROM test;

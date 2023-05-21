@@ -41,10 +41,10 @@ func TestConvertESQuery_Success(t *testing.T) {
 		{
 			name: "convert success",
 			stmt: &SelectStatement{
-				Fields:    []string{"name"},
+				Fields:    []string{"id", "name"},
 				TableName: "tbl",
 			},
-			want: `{"query":{"match_all":{}}}`,
+			want: `{"_source":["id","name"],"query":{"match_all":{}}}`,
 		},
 	}
 	for _, tt := range tests {

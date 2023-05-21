@@ -90,9 +90,10 @@ func readFile(fn string) (string, error) {
 }
 
 func (c *CLI) convertToQueryDSL(stmt *SelectStatement) (string, error) {
-	queryDSL := QueryDSL{}
+	// queryDSL := QueryDSL{}
+	queryMap := c.generateQueryMap(stmt)
 	if stmt != nil {
-		marshaled, err := json.Marshal(queryDSL)
+		marshaled, err := json.Marshal(queryMap)
 		if err != nil {
 			return "", fmt.Errorf("cannot marshal: %w", err)
 		}
@@ -101,4 +102,18 @@ func (c *CLI) convertToQueryDSL(stmt *SelectStatement) (string, error) {
 	}
 
 	return "", nil
+}
+
+func (c *CLI) generateQueryMap(stmt *SelectStatement) map[string]interface{} {
+	var queryDSL map[string]interface{}
+	if stmt != nil && len(stmt.Fields) != 0 {
+		queryDSL = map[string]interface{}{
+			"_source": stmt.Fields,
+			"query": map[string]interface{}{
+				"match_all": map[string]interface{}{},
+			},
+		}
+	}
+
+	return queryDSL
 }
