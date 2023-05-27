@@ -15,13 +15,6 @@ const (
 	ExitCodeFail           = 1
 )
 
-type QueryDSL struct {
-	Query struct {
-		Match_all struct {
-		} `json:"match_all"`
-	} `json:"query"`
-}
-
 type CLI struct {
 	outStream, errStream io.Writer
 }
@@ -74,7 +67,7 @@ func (c *CLI) run(filename string) int {
 func readFile(fn string) (string, error) {
 	f, err := os.Open(fn)
 	if err != nil {
-		return "", fmt.Errorf("File open error: %v", err)
+		return "", fmt.Errorf("file open error: %v", err)
 	}
 
 	defer func(f *os.File) {
