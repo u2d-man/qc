@@ -2,7 +2,6 @@ package cli
 
 import (
 	"encoding/json"
-	"flag"
 	"fmt"
 	"io"
 	"os"
@@ -10,9 +9,9 @@ import (
 )
 
 const (
-	ExitCodeOK             = 0
-	ExitCodeParseFlagError = 1
-	ExitCodeFail           = 1
+	ExitCodeOK   = 0
+	ExitCodeFail = 1
+	ArgsFilename = 1
 )
 
 type CLI struct {
@@ -26,14 +25,13 @@ func NewCli(outStream, errStream io.Writer) *CLI {
 func (c *CLI) Execute(args []string) int {
 	var filename string
 
-	flags := flag.NewFlagSet("qc", flag.ExitOnError)
-	flags.SetOutput(c.errStream)
-
-	flags.StringVar(&filename, "f", "", "Allowed extensions: .sql")
-
-	err := flags.Parse(args[1:])
-	if err != nil {
-		return ExitCodeParseFlagError
+	if len(args) == ArgsFilename {
+		panic("specify the file name as the first argument.")
+	}
+	for i, v := range args {
+		if i == 1 {
+			filename = v
+		}
 	}
 
 	return c.run(filename)
